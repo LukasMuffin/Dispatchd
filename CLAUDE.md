@@ -45,6 +45,8 @@ CI runs lint, format check, mypy, and pytest on every PR. All of them must pass.
 - Every change ships with tests.
 - Use type hints everywhere. mypy runs in strict mode.
 - Add dependencies with `uv add` (or `uv add --dev`), and commit `uv.lock`.
+- The job queue is Postgres using `SELECT ... FOR UPDATE SKIP LOCKED` (see ADR-001).
+  Don't introduce Redis or another queue without a new ADR.
 
 ## Git and PR rules
 
@@ -64,4 +66,8 @@ API contract, a delivery guarantee, and so on), do not pick one and keep going:
 
 ### Open ADRs
 
-- ADR-001 Queue backend: Proposed
+- None
+
+### Accepted ADRs
+
+- ADR-001 Queue backend: Accepted (Postgres, `FOR UPDATE SKIP LOCKED`)

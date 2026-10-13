@@ -1,6 +1,6 @@
 # ADR-001: Queue backend
 
-- **Status:** Proposed
+- **Status:** Accepted (2026-10-13)
 - **Date:** 2026-10-12
 
 ## Context
@@ -113,9 +113,26 @@ handle crashed workers, and a redrive policy handles dead letters.
   cheap to adopt?
 
 ## Decision
-
-_Pending. The project owner will decide._
+Written by me
+- Picked Postgres with SELECT ... FOR UPDATE SKIP LOCKED as the job queue
+- The job and event are written atomically in one transaction so there is no dual
+write problem. There is only one system to run and no service to pay for.
+- Did not choose Redis Streams due to the dual write problem and because it is a
+second service. Did not choose a managed queue as I did not want to be locked into
+a cloud provider or pay for it
 
 ## Consequences
 
-_To be written once a decision is made._
+- Polling adds pickup latency. With Postgres an idle queue adds up to one poll
+interval of pickup latency. Redis would deliver immediately via blocking reads. We
+accept this for now; LISTEN/NOTIFY can close the gap if needed
+- Lower throughput ceiling than Redis, since every job claim is a locked row update.
+- The queue shares the database's connections and CPU with the rest of the app, so
+  heavy queue traffic can slow other queries.
+- Finished jobs and dead rows build up, so a cleanup or archiving job will be needed
+  eventually.
+
+## Revisit when
+
+- The milestone 5 load test shows the queue is the bottleneck. Options then:
+  LISTEN/NOTIFY, batching job claims, or moving the queue to Redis.
