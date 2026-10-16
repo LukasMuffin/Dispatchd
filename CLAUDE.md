@@ -54,10 +54,16 @@ CI runs lint, format check, mypy, and pytest on every PR. All of them must pass.
 - Name branches `feat/...`, `fix/...`, or `docs/...`.
 - Every PR description explains **what** changed, **why**, and **how it was tested**.
 
-## Design decisions: stop and write an ADR
+## Design decisions
 
-When a change requires a design decision (choosing a technology, a data model, an
-API contract, a delivery guarantee, and so on), do not pick one and keep going:
+Decisions come in two tiers.
+
+**Small decisions:** make them yourself (library versions, file layout, naming,
+internal helpers) and list them under "Decisions made" in the PR description.
+
+**Decisions that shape the system:** write a Proposed ADR and stop. This covers the
+queue, data access, retry/delivery semantics, security and signing, deployment, or
+anything hard to reverse. Don't pick one and keep going:
 
 1. Copy `docs/adr/template.md` to `docs/adr/NNN-short-title.md`, using the next number.
 2. Set the status to **Proposed**, and lay out 2–3 options with their tradeoffs.
@@ -72,4 +78,14 @@ API contract, a delivery guarantee, and so on), do not pick one and keep going:
 ### Accepted ADRs
 
 - ADR-001 Queue backend: Accepted (Postgres, `FOR UPDATE SKIP LOCKED`)
-- ADR-002 Database access: Accepted (psycopg 3 async API, hand-written SQL)
+- ADR-002 Database access: Accepted (psycopg 3 async API, hand-written SQL). It also
+  settles the worker's concurrency model as async (tasks in one event loop), so the
+  worker semantics ADR builds on that rather than reopening it.
+
+## Learning
+
+- In each milestone, the project owner writes one piece of code themselves. Before
+  starting a milestone, suggest which piece, leave it for them, and review their PR
+  strictly.
+- When you open a PR, end your reply with 3 questions the project owner should be
+  able to answer about it before merging. Don't give the answers unless asked.
