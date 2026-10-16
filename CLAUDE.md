@@ -66,8 +66,10 @@ API contract, a delivery guarantee, and so on), do not pick one and keep going:
 
 ### Open ADRs
 
-- None
+- ADR-003 Database migrations: Proposed
+- ADR-004 Data model and ingest API: Proposed
 
 ### Accepted ADRs
 
 - ADR-001 Queue backend: Accepted (Postgres, `FOR UPDATE SKIP LOCKED`)
+- ADR-002 Database access: Accepted (psycopg 3 async API, hand-written SQL)
